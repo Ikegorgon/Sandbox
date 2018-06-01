@@ -20,7 +20,7 @@ public class SandboxFrame extends JFrame {
 	private void setupFrame() {
 		this.setContentPane(appPanel);
 		this.setTitle("Sandbox");
-		this.setSize(1000, 1000);
+		this.setSize(750, 750);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);

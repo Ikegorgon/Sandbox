@@ -5,9 +5,12 @@ import sandbox.model.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import javax.swing.*;
+import javax.swing.event.*;
 
-public class SandboxPanel extends JPanel {
+public class SandboxPanel extends JPanel implements MouseListener, 
+	MouseMotionListener, ActionListener, ChangeListener {
 	private SandboxController app;
 	private SandboxFrame frame;
 	private Sandbox sandbox;
@@ -25,14 +28,24 @@ public class SandboxPanel extends JPanel {
 	private JButton acid;
 	private JButton gas;
 	private JButton ice;
+	private Image image;
+	private int cellSize;
+	private int tool;
+	private int numRows;
+	private int numCols;
+	private int[] mouseLoc;
 	
-	public SandboxPanel() {
-		
-	}
+//	public SandboxPanel() {
+//		
+//	}
 	public SandboxPanel(SandboxController app) {
 		super();
+		int numRows = 100;
+		int numCols = 100;
 		setFont(new Font("Times New Roman", Font.PLAIN, 12));
 		this.app = app;
+		this.numRows = numRows;
+		this.numCols = numCols;
 		sandbox = new Sandbox(100, 100);
 		appLayout = new SpringLayout();
 		name = new JLabel("Sandbox");
@@ -46,6 +59,12 @@ public class SandboxPanel extends JPanel {
 		acid = new JButton("Acid");
 		gas = new JButton("Gas");
 		ice = new JButton("Ice");
+		cellSize = Math.max(1, 600 / Math.max(numRows, numCols));
+		image = new BufferedImage(numCols * cellSize, numRows * cellSize,
+				BufferedImage.TYPE_INT_RGB);
+		tool = 1;
+		mouseLoc = null;
+		
 		buttonList = new ArrayList<JButton>();
 		buttonList.add(clear);
 		buttonList.add(erase);
@@ -61,8 +80,8 @@ public class SandboxPanel extends JPanel {
 		for (int i = 0; i < buttons.length; i++) {
 			buttons[i] = buttonList.get(i);
 		}
-		setupLayout();
 		setupPanel();
+		setupLayout();
 		setupListeners();
 	}
 	private void setupLayout()  {
@@ -72,16 +91,9 @@ public class SandboxPanel extends JPanel {
 		this.setBackground(Color.DARK_GRAY);
 		this.setLayout(appLayout);
 		this.add(name);
-		this.add(clear);
-		this.add(erase);
-		this.add(metal);
-		this.add(sand);
-		this.add(water);
-		this.add(wood);
-		this.add(lava);
-		this.add(acid);
-		this.add(gas);
-		this.add(ice);
+		for (int i = 0; i < buttons.length; i++) {
+			this.add(buttonList.get(i));
+		}
 	}
 	private void setupListeners() {
 		clear.addActionListener(new ActionListener() {
@@ -134,5 +146,47 @@ public class SandboxPanel extends JPanel {
 				
 			}
 		});
+	}
+	public void stateChanged(ChangeEvent e) {
+		
+	}
+	public void actionPerformed(ActionEvent e) {
+		tool = Integer.parseInt(e.getActionCommand());
+		for (JButton button : buttons) {
+			button.setSelected(false);
+			((JButton)e.getSource()).setSelected(true);
+		}
+	}
+	public void mouseDragged(MouseEvent e) {
+		mouseLoc = toLocation(e);
+	}
+	public void mouseMoved(MouseEvent e) {
+		
+	}
+	public void mouseClicked(MouseEvent e) {
+		
+	}
+	public void mousePressed(MouseEvent e) {
+		mouseLoc = toLocation(e);
+	}
+	public void mouseReleased(MouseEvent e) {
+		mouseLoc = null;
+	}
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+	public void mouseExited(MouseEvent e) {
+		
+	}
+	private int[] toLocation(MouseEvent e) {
+		int row = e.getX() / cellSize;
+		int col = e.getY() / cellSize;
+		if (row < 0 || row >= numRows || col < 0 || col >= numCols) {
+			return null;
+		}
+		int[] loc = new int[2];
+		loc[0] = row;
+		loc[1] = col;
+		return loc;
 	}
 }

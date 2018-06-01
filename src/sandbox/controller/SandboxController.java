@@ -8,7 +8,6 @@ public class SandboxController {
 	private Sandbox sandbox;
 	public void start() {
 		appFrame = new SandboxFrame(this);
-		sandbox = new Sandbox(100, 100);
 	}
 	public SandboxFrame getFrame() {
 		return appFrame;
